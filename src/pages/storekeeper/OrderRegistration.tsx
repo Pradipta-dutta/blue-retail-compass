@@ -283,6 +283,90 @@ const OrderRegistration = () => {
           </CardContent>
         </Card>
 
+        {/* New Customer Dialog */}
+        <Dialog open={showNewCustomerDialog} onOpenChange={setShowNewCustomerDialog}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center text-store-blue">
+                <UserPlus className="w-5 h-5 mr-2" />
+                Create New Customer
+              </DialogTitle>
+              <DialogDescription>
+                Customer not found. Create a new customer account.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="newPhone" className="flex items-center">
+                  <Phone className="w-4 h-4 mr-2 text-store-blue" />
+                  Phone Number
+                </Label>
+                <Input
+                  id="newPhone"
+                  value={newCustomerData.phoneNumber}
+                  onChange={(e) => setNewCustomerData({...newCustomerData, phoneNumber: e.target.value})}
+                  className="store-input"
+                  disabled
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="newName" className="flex items-center">
+                  <User className="w-4 h-4 mr-2 text-store-blue" />
+                  Customer Name *
+                </Label>
+                <Input
+                  id="newName"
+                  value={newCustomerData.name}
+                  onChange={(e) => setNewCustomerData({...newCustomerData, name: e.target.value})}
+                  placeholder="Enter customer name"
+                  className="store-input"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="newPassword" className="flex items-center">
+                  <Lock className="w-4 h-4 mr-2 text-store-blue" />
+                  Password *
+                </Label>
+                <Input
+                  id="newPassword"
+                  type="password"
+                  value={newCustomerData.password}
+                  onChange={(e) => setNewCustomerData({...newCustomerData, password: e.target.value})}
+                  placeholder="Create password for customer"
+                  className="store-input"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="newLoyalty" className="flex items-center">
+                  <Star className="w-4 h-4 mr-2 text-yellow-500" />
+                  Initial Loyalty Points
+                </Label>
+                <Input
+                  id="newLoyalty"
+                  type="number"
+                  min="0"
+                  value={newCustomerData.loyaltyPoints}
+                  onChange={(e) => setNewCustomerData({...newCustomerData, loyaltyPoints: parseInt(e.target.value) || 0})}
+                  placeholder="0"
+                  className="store-input"
+                />
+              </div>
+              <div className="flex gap-2 pt-4">
+                <Button onClick={createNewCustomer} className="flex-1 store-button">
+                  Create Customer
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowNewCustomerDialog(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* Add Products */}
         <Card className="store-card">
           <CardHeader>

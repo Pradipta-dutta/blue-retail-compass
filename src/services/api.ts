@@ -35,7 +35,10 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(customer),
     });
-    if (!response.ok) throw new Error('Failed to create customer');
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to create customer');
+    }
     return response.json();
   },
 

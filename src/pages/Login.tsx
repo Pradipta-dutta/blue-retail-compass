@@ -19,7 +19,6 @@ const Login = () => {
   const defaultPortal = searchParams.get('portal') || 'customer';
   const [selectedPortal, setSelectedPortal] = useState(defaultPortal);
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [otp, setOtp] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
