@@ -11,6 +11,10 @@ const customerSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  password: {
+    type: String,
+    required: true
+  },
   loyaltyPoints: {
     type: Number,
     default: 0

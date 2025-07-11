@@ -10,6 +10,7 @@ import { DataProvider } from "@/contexts/DataContext";
 // Pages
 import Landing from "./pages/Landing";
 import CustomerPortal from "./pages/customer/CustomerPortal";
+import CustomerSignup from "./pages/customer/CustomerSignup";
 import StorekeeperPortal from "./pages/storekeeper/StorekeeperPortal";
 import EmployeePortal from "./pages/employee/EmployeePortal";
 import AdminPortal from "./pages/admin/AdminPortal";
@@ -29,6 +30,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/customer/signup" element={<CustomerSignup />} />
               <Route path="/customer/*" element={<CustomerPortal />} />
               <Route path="/storekeeper/*" element={<StorekeeperPortal />} />
               <Route path="/employee/*" element={<EmployeePortal />} />

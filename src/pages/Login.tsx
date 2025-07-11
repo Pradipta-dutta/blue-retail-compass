@@ -32,31 +32,39 @@ const Login = () => {
   };
 
   const handleCustomerLogin = async () => {
-    if (!phoneNumber || !otp) {
-      toast.error('Please enter both phone number and OTP');
-      return;
-    }
-
-    if (otp !== '1234') {
-      toast.error('Invalid OTP. Use 1234 for demo.');
+    if (!phoneNumber || !password) {
+      toast.error('Please enter both phone number and password');
       return;
     }
 
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Verify customer credentials
+      const customer = await api.getCustomer(phoneNumber);
+      
+      // In a real app, password would be hashed and compared securely
+      if (customer.password !== password) {
+        toast.error('Invalid credentials');
+        setIsLoading(false);
+        return;
+      }
+
       login({
         id: phoneNumber,
         role: 'customer',
         phoneNumber: phoneNumber,
-        name: 'Demo Customer'
+        name: customer.name
       });
       
-      toast.success('Login successful!');
+      toast.success(`Welcome, ${customer.name}!`);
       navigate('/customer');
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Invalid credentials');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleStaffLogin = async () => {
@@ -163,24 +171,32 @@ const Login = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="otp">OTP</Label>
+                  <Label htmlFor="password">Password</Label>
                   <Input
-                    id="otp"
-                    type="text"
-                    placeholder="Enter OTP (use 1234)"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="store-input"
                   />
-                  <p className="text-sm text-gray-500">Demo OTP: 1234</p>
                 </div>
                 <Button 
                   onClick={handleCustomerLogin} 
                   className="w-full store-button"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Logging in...' : 'Login with OTP'}
+                  {isLoading ? 'Logging in...' : 'Login'}
                 </Button>
+                
+                <div className="text-center">
+                  <p className="text-sm text-gray-600">
+                    Don't have an account?{' '}
+                    <Link to="/customer/signup" className="text-store-blue hover:text-store-blue-dark font-medium">
+                      Sign up here
+                    </Link>
+                  </p>
+                </div>
               </div>
             ) : (
               /* Staff Login Form */

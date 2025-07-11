@@ -33,6 +33,7 @@ const seedData = async () => {
       customers.push({
         phoneNumber: `555${String(1000000 + i).padStart(7, '0')}`,
         name: `${firstName} ${lastName}`,
+        password: 'password123', // Default password for demo
         loyaltyPoints: Math.floor(Math.random() * 101),
         orderHistory: []
       });

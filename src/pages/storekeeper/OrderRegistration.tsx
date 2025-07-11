@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ShoppingCart, Plus, Minus, Trash2, User, Receipt } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ShoppingCart, Plus, Minus, Trash2, User, Receipt, UserPlus, Phone, Lock, Star } from 'lucide-react';
 import { api } from '@/services/api';
 import { toast } from 'sonner';
 
@@ -44,6 +45,13 @@ const OrderRegistration = () => {
   const [selectedProductId, setSelectedProductId] = useState('');
   const [discountPoints, setDiscountPoints] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [showNewCustomerDialog, setShowNewCustomerDialog] = useState(false);
+  const [newCustomerData, setNewCustomerData] = useState({
+    phoneNumber: '',
+    name: '',
+    password: '',
+    loyaltyPoints: 0
+  });
 
   useEffect(() => {
     fetchProducts();
@@ -73,23 +81,9 @@ const OrderRegistration = () => {
     } catch (error) {
       console.error('Error finding customer:', error);
       
-      // Create new customer if not found
-      const name = prompt('Customer not found. Enter customer name to create new account:');
-      if (name) {
-        try {
-          const newCustomer = await api.createCustomer({
-            phoneNumber,
-            name,
-            loyaltyPoints: 0,
-            orderHistory: []
-          });
-          setCustomer(newCustomer);
-          toast.success('New customer created');
-        } catch (createError) {
-          console.error('Error creating customer:', createError);
-          toast.error('Failed to create customer');
-        }
-      }
+      // Show dialog to create new customer
+      setNewCustomerData({ ...newCustomerData, phoneNumber });
+      setShowNewCustomerDialog(true);
     } finally {
       setLoading(false);
     }
