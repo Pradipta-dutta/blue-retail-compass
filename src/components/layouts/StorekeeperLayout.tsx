@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Package, Inventory, ShoppingCart, Bell, LogOut, Menu, X } from 'lucide-react';
+import { Package, Warehouse, ShoppingCart, Bell, LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
@@ -20,7 +20,7 @@ const StorekeeperLayout = ({ children }: { children: React.ReactNode }) => {
 
   const navigation = [
     { name: 'Dashboard', href: '/storekeeper', icon: Package },
-    { name: 'Stock Management', href: '/storekeeper/stock', icon: Inventory },
+    { name: 'Stock Management', href: '/storekeeper/stock', icon: Warehouse },
     { name: 'Order Registration', href: '/storekeeper/orders', icon: ShoppingCart },
     { name: 'Send Alerts', href: '/storekeeper/alerts', icon: Bell },
   ];
