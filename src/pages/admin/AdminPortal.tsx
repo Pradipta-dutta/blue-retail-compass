@@ -2,6 +2,11 @@
 import { Routes, Route } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
+import AdminLayout from '@/components/layouts/AdminLayout';
+import AdminDashboard from './AdminDashboard';
+import AdminStock from './AdminStock';
+import AdminUsers from './AdminUsers';
+import AdminOrders from './AdminOrders';
 
 const AdminPortal = () => {
   const { user, isAuthenticated } = useAuth();
@@ -11,14 +16,14 @@ const AdminPortal = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-store-blue mb-8">Admin Portal</h1>
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <p className="text-gray-600">Admin portal coming soon...</p>
-        </div>
-      </div>
-    </div>
+    <AdminLayout>
+      <Routes>
+        <Route index element={<AdminDashboard />} />
+        <Route path="stock" element={<AdminStock />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="orders" element={<AdminOrders />} />
+      </Routes>
+    </AdminLayout>
   );
 };
 

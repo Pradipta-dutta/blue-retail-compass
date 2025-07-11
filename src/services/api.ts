@@ -178,5 +178,23 @@ export const api = {
     });
     if (!response.ok) throw new Error('Failed to update alert');
     return response.json();
+  },
+
+  async createEmployee(employee: any) {
+    const response = await fetch(`${API_BASE}/employees`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(employee),
+    });
+    if (!response.ok) throw new Error('Failed to create employee');
+    return response.json();
+  },
+
+  async deleteEmployee(employeeId: string) {
+    const response = await fetch(`${API_BASE}/employees/${employeeId}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error('Failed to delete employee');
+    return response.json();
   }
 };

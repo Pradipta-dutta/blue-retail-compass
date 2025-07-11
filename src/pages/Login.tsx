@@ -68,7 +68,7 @@ const Login = () => {
     // Demo credentials
     const demoCredentials = {
       storekeeper: { email: 'keeper@store.com', password: 'password', name: 'Demo Storekeeper' },
-      employee: { email: 'emp@store.com', password: 'password', name: 'Demo Employee' },
+      employee: { email: 'emp@store.com', password: 'password', name: 'Demo Employee', employeeId: 'EMP001' },
       admin: { email: 'admin@store.com', password: 'password', name: 'Demo Admin' }
     };
 
@@ -85,7 +85,8 @@ const Login = () => {
       login({
         id: email,
         role: selectedPortal as any,
-        name: credentials.name
+        name: credentials.name,
+        ...(selectedPortal === 'employee' && { employeeId: credentials.employeeId })
       });
       
       toast.success('Login successful!');
