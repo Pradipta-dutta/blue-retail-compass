@@ -1,175 +1,189 @@
 
 // API service for communicating with Express backend
-// This will replace mock data with actual API calls to the backend
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://your-backend-url.render.com' 
+  : 'http://localhost:5000';
 
 class ApiService {
-  private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  private async request(endpoint: string, options: RequestInit = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
-    
-    const response = await fetch(url, {
+    const config = {
       headers: {
         'Content-Type': 'application/json',
-        ...options?.headers,
+        ...options.headers,
       },
       ...options,
-    });
+    };
 
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    try {
+      const response = await fetch(url, config);
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'API request failed');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
     }
-
-    return response.json();
   }
 
-  // Customer API calls
+  // Customer API methods
   async getCustomers() {
-    return this.request<any[]>('/customers');
+    // Fetches data from Express server at /api/customers
+    return this.request('/api/customers');
   }
 
-  async getCustomerByPhone(phoneNumber: string) {
-    return this.request<any>(`/customers/${phoneNumber}`);
+  async getCustomer(phoneNumber: string) {
+    // Fetches customer data from Express server at /api/customers/:phoneNumber
+    return this.request(`/api/customers/${phoneNumber}`);
   }
 
-  async createCustomer(customer: any) {
-    return this.request<any>('/customers', {
+  async createCustomer(customerData: any) {
+    return this.request('/api/customers', {
       method: 'POST',
-      body: JSON.stringify(customer),
+      body: JSON.stringify(customerData),
     });
   }
 
   async updateCustomer(phoneNumber: string, updates: any) {
-    return this.request<any>(`/customers/${phoneNumber}`, {
+    return this.request(`/api/customers/${phoneNumber}`, {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
   }
 
   async deleteCustomer(phoneNumber: string) {
-    return this.request<void>(`/customers/${phoneNumber}`, {
+    return this.request(`/api/customers/${phoneNumber}`, {
       method: 'DELETE',
     });
   }
 
-  // Product API calls
-  async getProducts(queryParams?: string) {
-    const endpoint = queryParams ? `/products?${queryParams}` : '/products';
-    return this.request<any[]>(endpoint);
+  // Product API methods
+  async getProducts(params?: { name?: string; category?: string }) {
+    // Fetches data from Express server at /api/products
+    const queryString = params ? new URLSearchParams(params).toString() : '';
+    return this.request(`/api/products${queryString ? `?${queryString}` : ''}`);
   }
 
-  async getProductById(productId: string) {
-    return this.request<any>(`/products/${productId}`);
+  async getProduct(productId: string) {
+    return this.request(`/api/products/${productId}`);
   }
 
-  async createProduct(product: any) {
-    return this.request<any>('/products', {
+  async createProduct(productData: any) {
+    return this.request('/api/products', {
       method: 'POST',
-      body: JSON.stringify(product),
+      body: JSON.stringify(productData),
     });
   }
 
   async updateProduct(productId: string, updates: any) {
-    return this.request<any>(`/products/${productId}`, {
+    return this.request(`/api/products/${productId}`, {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
   }
 
   async deleteProduct(productId: string) {
-    return this.request<void>(`/products/${productId}`, {
+    return this.request(`/api/products/${productId}`, {
       method: 'DELETE',
     });
   }
 
-  // Order API calls
-  async getOrders(queryParams?: string) {
-    const endpoint = queryParams ? `/orders?${queryParams}` : '/orders';
-    return this.request<any[]>(endpoint);
+  // Order API methods
+  async getOrders(params?: { customerId?: string; status?: string; startDate?: string; endDate?: string }) {
+    // Fetches data from Express server at /api/orders
+    const queryString = params ? new URLSearchParams(params).toString() : '';
+    return this.request(`/api/orders${queryString ? `?${queryString}` : ''}`);
   }
 
-  async getOrderById(orderId: string) {
-    return this.request<any>(`/orders/${orderId}`);
+  async getOrder(orderId: string) {
+    return this.request(`/api/orders/${orderId}`);
   }
 
-  async createOrder(order: any) {
-    return this.request<any>('/orders', {
+  async createOrder(orderData: any) {
+    return this.request('/api/orders', {
       method: 'POST',
-      body: JSON.stringify(order),
+      body: JSON.stringify(orderData),
     });
   }
 
   async updateOrder(orderId: string, updates: any) {
-    return this.request<any>(`/orders/${orderId}`, {
+    return this.request(`/api/orders/${orderId}`, {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
   }
 
   async deleteOrder(orderId: string) {
-    return this.request<void>(`/orders/${orderId}`, {
+    return this.request(`/api/orders/${orderId}`, {
       method: 'DELETE',
     });
   }
 
-  // Employee API calls
+  // Employee API methods
   async getEmployees() {
-    return this.request<any[]>('/employees');
+    // Fetches data from Express server at /api/employees
+    return this.request('/api/employees');
   }
 
-  async getEmployeeById(employeeId: string) {
-    return this.request<any>(`/employees/${employeeId}`);
+  async getEmployee(employeeId: string) {
+    return this.request(`/api/employees/${employeeId}`);
   }
 
-  async createEmployee(employee: any) {
-    return this.request<any>('/employees', {
+  async createEmployee(employeeData: any) {
+    return this.request('/api/employees', {
       method: 'POST',
-      body: JSON.stringify(employee),
+      body: JSON.stringify(employeeData),
     });
   }
 
   async updateEmployee(employeeId: string, updates: any) {
-    return this.request<any>(`/employees/${employeeId}`, {
+    return this.request(`/api/employees/${employeeId}`, {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
   }
 
   async deleteEmployee(employeeId: string) {
-    return this.request<void>(`/employees/${employeeId}`, {
+    return this.request(`/api/employees/${employeeId}`, {
       method: 'DELETE',
     });
   }
 
-  // Alert API calls
-  async getAlerts(queryParams?: string) {
-    const endpoint = queryParams ? `/alerts?${queryParams}` : '/alerts';
-    return this.request<any[]>(endpoint);
+  // Alert API methods
+  async getAlerts(params?: { employeeId?: string }) {
+    // Fetches data from Express server at /api/alerts
+    const queryString = params ? new URLSearchParams(params).toString() : '';
+    return this.request(`/api/alerts${queryString ? `?${queryString}` : ''}`);
   }
 
-  async getAlertById(alertId: string) {
-    return this.request<any>(`/alerts/${alertId}`);
+  async getAlert(alertId: string) {
+    return this.request(`/api/alerts/${alertId}`);
   }
 
-  async createAlert(alert: any) {
-    return this.request<any>('/alerts', {
+  async createAlert(alertData: any) {
+    return this.request('/api/alerts', {
       method: 'POST',
-      body: JSON.stringify(alert),
+      body: JSON.stringify(alertData),
     });
   }
 
   async updateAlert(alertId: string, updates: any) {
-    return this.request<any>(`/alerts/${alertId}`, {
+    return this.request(`/api/alerts/${alertId}`, {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
   }
 
   async deleteAlert(alertId: string) {
-    return this.request<void>(`/alerts/${alertId}`, {
+    return this.request(`/api/alerts/${alertId}`, {
       method: 'DELETE',
     });
   }
 }
 
 export const apiService = new ApiService();
+export default apiService;

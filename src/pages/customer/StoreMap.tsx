@@ -49,7 +49,7 @@ const StoreMap = () => {
       w-12 h-12 border-2 border-gray-200 rounded-lg flex items-center justify-center
       text-xs font-medium cursor-pointer transition-all duration-300
       ${isHighlighted 
-        ? 'bg-store-blue text-white border-store-blue shadow-lg scale-105' 
+        ? 'bg-store-blue text-white border-store-blue shadow-lg scale-105 animate-pulse' 
         : 'bg-white hover:bg-blue-50 hover:border-blue-300'
       }
     `;
@@ -119,6 +119,7 @@ const StoreMap = () => {
                   <div
                     key={`${aisle}-${shelf}`}
                     className={getCellClass(aisle, shelf)}
+                    title={`Aisle ${aisle}, Shelf ${shelf}`}
                   >
                     {aisle}{shelf}
                   </div>
@@ -140,6 +141,9 @@ const StoreMap = () => {
                     </Badge>
                   ))}
               </div>
+              <Button className="store-button mt-2">
+                Navigate to Product
+              </Button>
             </div>
           )}
         </CardContent>
