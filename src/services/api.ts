@@ -1,189 +1,182 @@
+const API_BASE = 'http://localhost:5000/api';
 
-// API service for communicating with Express backend
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-backend-url.render.com' 
-  : 'http://localhost:5000';
-
-class ApiService {
-  private async request(endpoint: string, options: RequestInit = {}) {
-    const url = `${API_BASE_URL}${endpoint}`;
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-      ...options,
-    };
-
-    try {
-      const response = await fetch(url, config);
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'API request failed');
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('API Error:', error);
-      throw error;
-    }
+// Helper function to handle HTTP errors
+const handleResponse = async (response: Response) => {
+  if (!response.ok) {
+    const errorBody = await response.json();
+    throw new Error(errorBody.message || `HTTP error! status: ${response.status}`);
   }
+  return response.json();
+};
 
-  // Customer API methods
-  async getCustomers() {
-    // Fetches data from Express server at /api/customers
-    return this.request('/api/customers');
-  }
-
-  async getCustomer(phoneNumber: string) {
-    // Fetches customer data from Express server at /api/customers/:phoneNumber
-    return this.request(`/api/customers/${phoneNumber}`);
-  }
-
-  async createCustomer(customerData: any) {
-    return this.request('/api/customers', {
-      method: 'POST',
-      body: JSON.stringify(customerData),
-    });
-  }
-
-  async updateCustomer(phoneNumber: string, updates: any) {
-    return this.request(`/api/customers/${phoneNumber}`, {
-      method: 'PUT',
-      body: JSON.stringify(updates),
-    });
-  }
-
-  async deleteCustomer(phoneNumber: string) {
-    return this.request(`/api/customers/${phoneNumber}`, {
-      method: 'DELETE',
-    });
-  }
-
-  // Product API methods
-  async getProducts(params?: { name?: string; category?: string }) {
-    // Fetches data from Express server at /api/products
-    const queryString = params ? new URLSearchParams(params).toString() : '';
-    return this.request(`/api/products${queryString ? `?${queryString}` : ''}`);
-  }
-
-  async getProduct(productId: string) {
-    return this.request(`/api/products/${productId}`);
-  }
-
-  async createProduct(productData: any) {
-    return this.request('/api/products', {
-      method: 'POST',
-      body: JSON.stringify(productData),
-    });
-  }
-
-  async updateProduct(productId: string, updates: any) {
-    return this.request(`/api/products/${productId}`, {
-      method: 'PUT',
-      body: JSON.stringify(updates),
-    });
-  }
-
-  async deleteProduct(productId: string) {
-    return this.request(`/api/products/${productId}`, {
-      method: 'DELETE',
-    });
-  }
-
-  // Order API methods
-  async getOrders(params?: { customerId?: string; status?: string; startDate?: string; endDate?: string }) {
-    // Fetches data from Express server at /api/orders
-    const queryString = params ? new URLSearchParams(params).toString() : '';
-    return this.request(`/api/orders${queryString ? `?${queryString}` : ''}`);
-  }
-
-  async getOrder(orderId: string) {
-    return this.request(`/api/orders/${orderId}`);
-  }
-
-  async createOrder(orderData: any) {
-    return this.request('/api/orders', {
-      method: 'POST',
-      body: JSON.stringify(orderData),
-    });
-  }
-
-  async updateOrder(orderId: string, updates: any) {
-    return this.request(`/api/orders/${orderId}`, {
-      method: 'PUT',
-      body: JSON.stringify(updates),
-    });
-  }
-
-  async deleteOrder(orderId: string) {
-    return this.request(`/api/orders/${orderId}`, {
-      method: 'DELETE',
-    });
-  }
-
-  // Employee API methods
-  async getEmployees() {
-    // Fetches data from Express server at /api/employees
-    return this.request('/api/employees');
-  }
-
-  async getEmployee(employeeId: string) {
-    return this.request(`/api/employees/${employeeId}`);
-  }
-
-  async createEmployee(employeeData: any) {
-    return this.request('/api/employees', {
-      method: 'POST',
-      body: JSON.stringify(employeeData),
-    });
-  }
-
-  async updateEmployee(employeeId: string, updates: any) {
-    return this.request(`/api/employees/${employeeId}`, {
-      method: 'PUT',
-      body: JSON.stringify(updates),
-    });
-  }
-
-  async deleteEmployee(employeeId: string) {
-    return this.request(`/api/employees/${employeeId}`, {
-      method: 'DELETE',
-    });
-  }
-
-  // Alert API methods
-  async getAlerts(params?: { employeeId?: string }) {
-    // Fetches data from Express server at /api/alerts
-    const queryString = params ? new URLSearchParams(params).toString() : '';
-    return this.request(`/api/alerts${queryString ? `?${queryString}` : ''}`);
-  }
-
-  async getAlert(alertId: string) {
-    return this.request(`/api/alerts/${alertId}`);
-  }
-
-  async createAlert(alertData: any) {
-    return this.request('/api/alerts', {
-      method: 'POST',
-      body: JSON.stringify(alertData),
-    });
-  }
-
-  async updateAlert(alertId: string, updates: any) {
-    return this.request(`/api/alerts/${alertId}`, {
-      method: 'PUT',
-      body: JSON.stringify(updates),
-    });
-  }
-
-  async deleteAlert(alertId: string) {
-    return this.request(`/api/alerts/${alertId}`, {
-      method: 'DELETE',
-    });
-  }
+// Define types for API responses
+interface ApiResponse<T> {
+  data: T | null;
+  error: string | null;
 }
 
-export const apiService = new ApiService();
-export default apiService;
+export const api = {
+  // Customer endpoints
+  async getCustomers() {
+    const response = await fetch(`${API_BASE}/customers`);
+    if (!response.ok) throw new Error('Failed to fetch customers');
+    return response.json();
+  },
+
+  async getCustomer(phoneNumber: string) {
+    const response = await fetch(`${API_BASE}/customers/${phoneNumber}`);
+    if (!response.ok) throw new Error('Customer not found');
+    return response.json();
+  },
+
+  async createCustomer(customer: any) {
+    const response = await fetch(`${API_BASE}/customers`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(customer),
+    });
+    if (!response.ok) throw new Error('Failed to create customer');
+    return response.json();
+  },
+
+  async updateCustomer(phoneNumber: string, updates: any) {
+    const response = await fetch(`${API_BASE}/customers/${phoneNumber}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+    if (!response.ok) throw new Error('Failed to update customer');
+    return response.json();
+  },
+
+  // Product endpoints
+  async getProducts(params?: { name?: string; category?: string }) {
+    let url = `${API_BASE}/products`;
+    if (params) {
+      const searchParams = new URLSearchParams();
+      if (params.name) searchParams.append('name', params.name);
+      if (params.category) searchParams.append('category', params.category);
+      if (searchParams.toString()) url += `?${searchParams.toString()}`;
+    }
+    
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch products');
+    return response.json();
+  },
+
+  async getProduct(productId: string) {
+    const response = await fetch(`${API_BASE}/products/${productId}`);
+    if (!response.ok) throw new Error('Product not found');
+    return response.json();
+  },
+
+  async createProduct(product: any) {
+    const response = await fetch(`${API_BASE}/products`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(product),
+    });
+    if (!response.ok) throw new Error('Failed to create product');
+    return response.json();
+  },
+
+  async updateProduct(productId: string, updates: any) {
+    const response = await fetch(`${API_BASE}/products/${productId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+    if (!response.ok) throw new Error('Failed to update product');
+    return response.json();
+  },
+
+  async deleteProduct(productId: string) {
+    const response = await fetch(`${API_BASE}/products/${productId}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error('Failed to delete product');
+    return response.json();
+  },
+
+  // Order endpoints
+  async getOrders(params?: { customerId?: string; status?: string; startDate?: string; endDate?: string }) {
+    let url = `${API_BASE}/orders`;
+    if (params) {
+      const searchParams = new URLSearchParams();
+      if (params.customerId) searchParams.append('customerId', params.customerId);
+      if (params.status) searchParams.append('status', params.status);
+      if (params.startDate) searchParams.append('startDate', params.startDate);
+      if (params.endDate) searchParams.append('endDate', params.endDate);
+      if (searchParams.toString()) url += `?${searchParams.toString()}`;
+    }
+    
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch orders');
+    return response.json();
+  },
+
+  async createOrder(order: any) {
+    const response = await fetch(`${API_BASE}/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(order),
+    });
+    if (!response.ok) throw new Error('Failed to create order');
+    return response.json();
+  },
+
+  // Employee endpoints
+  async getEmployees() {
+    const response = await fetch(`${API_BASE}/employees`);
+    if (!response.ok) throw new Error('Failed to fetch employees');
+    return response.json();
+  },
+
+  async getEmployee(employeeId: string) {
+    const response = await fetch(`${API_BASE}/employees/${employeeId}`);
+    if (!response.ok) throw new Error('Employee not found');
+    return response.json();
+  },
+
+  async updateEmployee(employeeId: string, updates: any) {
+    const response = await fetch(`${API_BASE}/employees/${employeeId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+    if (!response.ok) throw new Error('Failed to update employee');
+    return response.json();
+  },
+
+  // Alert endpoints
+  async getAlerts(params?: { employeeId?: string }) {
+    let url = `${API_BASE}/alerts`;
+    if (params?.employeeId) {
+      url += `?employeeId=${params.employeeId}`;
+    }
+    
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch alerts');
+    return response.json();
+  },
+
+  async createAlert(alert: any) {
+    const response = await fetch(`${API_BASE}/alerts`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(alert),
+    });
+    if (!response.ok) throw new Error('Failed to create alert');
+    return response.json();
+  },
+
+  async updateAlert(alertId: string, updates: any) {
+    const response = await fetch(`${API_BASE}/alerts/${alertId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+    if (!response.ok) throw new Error('Failed to update alert');
+    return response.json();
+  }
+};

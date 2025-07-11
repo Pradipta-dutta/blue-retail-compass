@@ -2,6 +2,11 @@
 import { Routes, Route } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
+import StorekeeperLayout from '@/components/layouts/StorekeeperLayout';
+import StorekeeperDashboard from './StorekeeperDashboard';
+import StockManagement from './StockManagement';
+import OrderRegistration from './OrderRegistration';
+import AlertManagement from './AlertManagement';
 
 const StorekeeperPortal = () => {
   const { user, isAuthenticated } = useAuth();
@@ -11,14 +16,14 @@ const StorekeeperPortal = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-store-blue mb-8">Storekeeper Portal</h1>
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <p className="text-gray-600">Storekeeper portal coming soon...</p>
-        </div>
-      </div>
-    </div>
+    <StorekeeperLayout>
+      <Routes>
+        <Route index element={<StorekeeperDashboard />} />
+        <Route path="stock" element={<StockManagement />} />
+        <Route path="orders" element={<OrderRegistration />} />
+        <Route path="alerts" element={<AlertManagement />} />
+      </Routes>
+    </StorekeeperLayout>
   );
 };
 
